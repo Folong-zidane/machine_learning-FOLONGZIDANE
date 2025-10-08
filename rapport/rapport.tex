@@ -1,0 +1,112 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage{geometry}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+
+\geometry{margin=2.5cm}
+
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    commentstyle=\color{green},
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny,
+    frame=single,
+    breaklines=true
+}
+
+\title{Rapport TP Deep Learning\\De la conception au déploiement}
+\author{Étudiant ENSPY}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+Ce rapport présente la réalisation du TP de Deep Learning portant sur la conception, l'entraînement et le déploiement d'un modèle de classification des chiffres manuscrits MNIST.
+
+\section{Partie 1 : Fondations du Deep Learning}
+
+\subsection{Concepts Théoriques}
+
+\textbf{Question 1 : Différence entre descente de gradient classique et SGD}
+
+La descente de gradient classique utilise l'ensemble du dataset pour calculer le gradient à chaque itération, ce qui est coûteux en mémoire et temps de calcul. La SGD (Stochastic Gradient Descent) utilise un échantillon aléatoire (batch) pour estimer le gradient, permettant des mises à jour plus fréquentes et une convergence plus rapide, particulièrement adaptée aux grands datasets du deep learning.
+
+\textbf{Rétropropagation du gradient}
+
+La rétropropagation calcule les gradients des poids en propageant l'erreur de la sortie vers l'entrée du réseau, utilisant la règle de dérivation en chaîne pour ajuster chaque poids proportionnellement à sa contribution à l'erreur finale.
+
+\subsection{Exercice 1 : Construction du réseau de neurones}
+
+\textbf{Question 1 : Utilité des couches Dense et Dropout}
+
+Les couches Dense (fully-connected) connectent chaque neurone à tous les neurones de la couche suivante, permettant l'apprentissage de relations complexes. La couche Dropout désactive aléatoirement des neurones pendant l'entraînement pour éviter le surapprentissage. La fonction softmax normalise les sorties en probabilités pour la classification multi-classes.
+
+\textbf{Question 2 : Optimiseur Adam}
+
+Adam combine les avantages de RMSprop et Momentum en adaptant le taux d'apprentissage pour chaque paramètre individuellement et en utilisant des moyennes mobiles des gradients et de leurs carrés, offrant une convergence plus stable et rapide que la SGD simple.
+
+\textbf{Question 3 : Vectorisation et calculs par lots}
+
+La vectorisation permet de traiter plusieurs échantillons simultanément via des opérations matricielles optimisées. Le paramètre \texttt{batch\_size=128} traite 128 images à la fois, exploitant le parallélisme des GPU et améliorant l'efficacité computationnelle.
+
+\section{Partie 2 : Ingénierie du Deep Learning}
+
+\subsection{Versionnement avec Git}
+Le projet a été versionné avec Git, permettant le suivi des modifications et la collaboration. Les commandes utilisées :
+\begin{lstlisting}
+git init
+git add .
+git commit -m "Initial commit"
+git remote add origin <URL>
+git push -u origin master
+\end{lstlisting}
+
+\subsection{Suivi avec MLflow}
+MLflow a été intégré pour tracer les paramètres (epochs, batch\_size, dropout\_rate) et métriques (test\_accuracy) de chaque expérimentation, facilitant la comparaison des modèles.
+
+\subsection{Conteneurisation Docker}
+L'application Flask a été conteneurisée avec Docker, incluant :
+\begin{itemize}
+    \item Image de base Python 3.9-slim
+    \item Installation des dépendances
+    \item Exposition du port 5000
+    \item API REST pour les prédictions
+\end{itemize}
+
+\subsection{Déploiement et CI/CD}
+
+\textbf{Question 1 : Pipeline CI/CD}
+
+Un pipeline GitHub Actions pourrait automatiser :
+\begin{enumerate}
+    \item Construction de l'image Docker à chaque push
+    \item Tests automatisés du modèle
+    \item Déploiement sur Google Cloud Run ou AWS ECS
+    \item Mise à jour automatique en production
+\end{enumerate}
+
+\textbf{Question 2 : Indicateurs de monitoring}
+
+Trois types d'indicateurs clés :
+\begin{enumerate}
+    \item \textbf{Performance} : Latence des prédictions, throughput, temps de réponse
+    \item \textbf{Qualité} : Accuracy en production, distribution des prédictions, détection de drift
+    \item \textbf{Infrastructure} : Utilisation CPU/mémoire, disponibilité du service, erreurs HTTP
+\end{enumerate}
+
+\section{Conclusion}
+Ce TP a permis de maîtriser le cycle complet d'un projet de Deep Learning, de la conception du modèle jusqu'au déploiement en production, en intégrant les bonnes pratiques d'ingénierie logicielle (versionnement, conteneurisation, monitoring).
+
+\end{document}
